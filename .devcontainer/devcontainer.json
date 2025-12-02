@@ -1,0 +1,28 @@
+{
+    "name": "Development Container",
+    "privileged": true,
+    "remoteUser": "user",
+    "dockerComposeFile": [
+        "./docker-compose.yml",
+        "./docker-compose.override.yml"
+    ],
+    "service": "rl-dev",
+    "workspaceFolder": "/reinforcement-learning-fb",
+    "overrideCommand": false,
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance"
+            ],
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "/bin/bash"
+                    }
+                }
+            }
+        }
+    }
+}

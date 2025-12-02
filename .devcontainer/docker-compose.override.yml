@@ -1,0 +1,12 @@
+services:
+  rl-dev:
+    environment:
+      DISPLAY: :0
+      WAYLAND_DISPLAY: wayland-0
+      PULSE_SERVER: /mnt/wslg/PulseServer
+      XDG_RUNTIME_DIR: /mnt/wslg/runtime-dir
+      LD_LIBRARY_PATH: /usr/lib/x86_64-linux-gnu
+    volumes:
+      - /run/desktop/mnt/host/wslg/.X11-unix:/tmp/.X11-unix
+      - /run/desktop/mnt/host/wslg:/mnt/wslg
+      - /usr/local/cuda:/usr/local/cuda
