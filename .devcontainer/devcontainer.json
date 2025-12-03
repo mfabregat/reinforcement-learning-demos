@@ -9,6 +9,7 @@
     "service": "rl-dev",
     "workspaceFolder": "/reinforcement-learning-fb",
     "overrideCommand": false,
+    "postCreateCommand": "pip install -r requirements.txt",
     "customizations": {
         "vscode": {
             "extensions": [

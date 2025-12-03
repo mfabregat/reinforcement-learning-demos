@@ -21,6 +21,14 @@ RUN apt-get update && \
     x11-apps \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Install specific packages
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    swig \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
     
 # Setup user configuration
 RUN groupadd --gid $USER_GID $USERNAME \
