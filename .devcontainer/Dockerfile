@@ -40,5 +40,5 @@ USER $USERNAME
 ## Use bash instead of sh
 SHELL ["/bin/bash", "-c"]
 
-WORKDIR /reinforcement-learning-fb
+WORKDIR /reinforcement-learning-demos
 

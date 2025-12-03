@@ -9,5 +9,5 @@ services:
     stdin_open: true
     runtime: nvidia
     volumes:
-      - ../:/reinforcement-learning-fb
+      - ../:/reinforcement-learning-demos
     tty: true # Keeps the container running interactively
