@@ -22,7 +22,10 @@
                     "bash": {
                         "path": "/bin/bash"
                     }
-                }
+                },
+                "python.analysis.extraPaths": [
+                    "/opt/conda/lib/python/site-packages"
+                ]
             }
         }
     }
