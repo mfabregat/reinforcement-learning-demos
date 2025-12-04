@@ -1,7 +1,0 @@
-setup.py
-agents/__init__.py
-agents/q_learning.py
-reinforcement_learning_demos.egg-info/PKG-INFO
-reinforcement_learning_demos.egg-info/SOURCES.txt
-reinforcement_learning_demos.egg-info/dependency_links.txt
-reinforcement_learning_demos.egg-info/top_level.txt

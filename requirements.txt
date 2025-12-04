@@ -2,4 +2,4 @@ swig
 gymnasium[all]
 pygame
 matplotlib
--e . # for local development modules
+-e ./rl_demos
