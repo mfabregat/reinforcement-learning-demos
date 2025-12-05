@@ -24,8 +24,10 @@
                     }
                 },
                 "python.analysis.extraPaths": [
-                    "/opt/conda/lib/python/site-packages"
-                ]
+                    "${containerEnv:CONDA_PREFIX}/lib/python/site-packages"
+                ],
+                // When the container provides a conda env, point VS Code's default interpreter there
+                "python.defaultInterpreterPath": "${containerEnv:CONDA_PREFIX}/bin/python"
             }
         }
     }
