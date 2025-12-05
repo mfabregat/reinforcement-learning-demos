@@ -26,3 +26,9 @@ class Agent(abc.ABC):
     @abc.abstractmethod
     def train(self, *args, **kwargs) -> None:
         raise NotImplementedError
+    
+
+class OffPolicyAgent(Agent):
+    @abc.abstractmethod
+    def store_transition(self, *args, **kwargs) -> None:
+        raise NotImplementedError
