@@ -19,27 +19,7 @@ The goal of this project is to build clear, reproducible implementations of RL a
 
 The project follows a standard RL interaction loop:
 
-```mermaid
-graph TD
-    subgraph Environment
-        State["State (s)"]
-        Reward["Reward (r)"]
-    end
-
-    subgraph Agent
-        Policy["Policy (π)"]
-        Value["Value Function (Q/V)"]
-    end
-
-    State --> Agent
-    Reward --> Agent
-    Agent -- "Action (a)" --> Environment
-    Environment -- "Next State (s')" --> State
-    Environment -- "Reward (r)" --> Reward
-
-    style Agent fill:#f9f,stroke:#333,stroke-width:2px
-    style Environment fill:#ccf,stroke:#333,stroke-width:2px
-```
+![RL loop](assets/rl_loop.png){width="50%"}
 
 ## 🚀 Environments & Demos
 
