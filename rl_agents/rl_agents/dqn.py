@@ -12,7 +12,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 
-from rl_demos.agents.agent import Agent
+from .agent import Agent
 
 
 
@@ -68,9 +68,3 @@ class DQNAgent(Agent):
         self.gamma = gamma
 
         self.dqn = DQN(self.env.observation_space.shape[0], self.env.action_space.n)
-
-        self.metrics = {
-            "training_error": [],
-            "episode_rewards": [],
-            "episode_lengths": [],
-        }

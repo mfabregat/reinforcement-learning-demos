@@ -1,8 +1,8 @@
 services:
   rl-dev:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: .devcontainer/Dockerfile
     container_name: rl-dev
     privileged: true
     command: /bin/bash

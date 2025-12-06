@@ -30,6 +30,8 @@ RUN apt-get update && \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+
+
     
 # Setup user configuration
 RUN groupadd --gid $USER_GID $USERNAME \
@@ -43,3 +45,8 @@ SHELL ["/bin/bash", "-c"]
 
 WORKDIR /reinforcement-learning-demos
 
+# Copy requirements.txt into the image
+COPY requirements.txt .
+
+# Install Python packages
+RUN pip install --upgrade pip && pip install -r requirements.txt

@@ -7,8 +7,7 @@ from typing import Union
 
 from .agent import Agent
 
-# Q-Learning Agent - only tested in FrozenLake environment
-class QLearningAgent(Agent):
+class TabularQLearningAgent(Agent):
     def __init__(
             self,
             env: Union[gym.Env, str],
@@ -36,11 +35,6 @@ class QLearningAgent(Agent):
         # Action-value function maps the expected reward for a given action performed in a given state
         self.q_table = defaultdict(lambda: np.zeros(self.env.action_space.n))
 
-        self.metrics = {
-            "training_error": [],
-            "episode_rewards": [],
-            "episode_lengths": [],
-        }
 
     def act(self, state: int) -> int:
         """Choose an action based on the eps-greedy policy.
@@ -161,64 +155,3 @@ class QLearningAgent(Agent):
         )
         agent.metrics = {k: v for k, v in data["metrics"].item().items()}
         return agent
-
-    def plot_metrics(self) -> None:
-        """Plot training metrics with improved smoothing, alignment and headless fallback."""
-        import matplotlib.pyplot as plt
-
-        def moving_average(arr, window):
-            arr = np.array(arr, dtype=float).flatten()
-            if arr.size == 0:
-                return np.array([], dtype=int), np.array([], dtype=float)
-            window = max(1, min(window, arr.size))
-            if window == 1:
-                return np.arange(arr.size), arr
-            ma = np.convolve(arr, np.ones(window) / window, mode="valid")
-            x = np.arange(window - 1, arr.size)
-            return x, ma
-
-        rolling_length = 500
-        fig, axs = plt.subplots(ncols=3, figsize=(12, 5))
-        axs = axs.ravel()
-
-        # Episode rewards
-        rewards = self.metrics.get("episode_rewards", [])
-        x_r, r_ma = moving_average(rewards, rolling_length)
-        axs[0].plot(rewards, color="0.85", label="raw")
-        if r_ma.size:
-            axs[0].plot(x_r, r_ma, color="C0", lw=1.5, label=f"MA(window={min(rolling_length, max(1, len(rewards)))})")
-        axs[0].set_title("Episode rewards")
-        axs[0].set_ylabel("Reward")
-        axs[0].set_xlabel("Episode")
-        axs[0].grid(True)
-        axs[0].legend()
-
-        # Episode lengths
-        lengths = self.metrics.get("episode_lengths", [])
-        x_l, l_ma = moving_average(lengths, rolling_length)
-        axs[1].plot(lengths, color="0.85", label="raw")
-        if l_ma.size:
-            axs[1].plot(x_l, l_ma, color="C1", lw=1.5, label="smoothed")
-        axs[1].set_title("Episode lengths")
-        axs[1].set_ylabel("Steps")
-        axs[1].set_xlabel("Episode")
-        axs[1].grid(True)
-        axs[1].legend()
-
-        # Training error (TD)
-        errors = self.metrics.get("training_error", [])
-        # TD error is higher-frequency — smooth with a smaller window
-        err_window = min(100, max(1, len(errors)))
-        x_e, e_ma = moving_average(errors, err_window)
-        axs[2].plot(errors, color="0.85", label="raw")
-        if e_ma.size:
-            axs[2].plot(x_e, e_ma, color="C2", lw=1.5, label=f"MA(window={err_window})")
-        axs[2].set_title("Training error (|TD|)")
-        axs[2].set_ylabel("Abs TD error")
-        axs[2].set_xlabel("Step")
-        axs[2].grid(True)
-        axs[2].legend()
-        axs[2].set_ylim(bottom=0)
-
-        plt.tight_layout()
-        plt.show()

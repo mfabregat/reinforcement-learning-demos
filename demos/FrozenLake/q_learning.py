@@ -4,7 +4,11 @@ import numpy as np
 import pickle
 import os
 
-from rl_demos.agents.q_learning import QLearningAgent
+import sys
+print(sys.path)
+
+
+from rl_agents.tabular_q_learning import TabularQLearningAgent
 
 n_episodes = 50_000
 
@@ -16,7 +20,7 @@ final_epsilon = 0.00001
 # Decay epsilon over 80% of training episodes
 epsilon_decay = (final_epsilon / initial_epsilon) ** (1 / (n_episodes * 0.8))
 
-agent = QLearningAgent(
+agent = TabularQLearningAgent(
     env=env,
     learning_rate=learning_rate,
     initial_epsilon=initial_epsilon,
@@ -26,10 +30,8 @@ agent = QLearningAgent(
 )
 
 agent.train(n_episodes=n_episodes)
-agent.save("taxi_q_learning_agent.npz")
+# agent.save("taxi_q_learning_agent.npz")
 
-agent = QLearningAgent.load("taxi_q_learning_agent.npz", env=env)
-
-# from matplotlib import pyplot as plt
+# agent = TabularQLearningAgent.load("taxi_q_learning_agent.npz", env=env)
 
 agent.plot_metrics()
