@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from tqdm import tqdm
 import gymnasium as gym
 import abc
@@ -31,21 +29,21 @@ class Agent(abc.ABC):
     def train(self, *args, **kwargs) -> None:
         raise NotImplementedError
     
-    def plot_metrics(self, metrics: Optional[list] = None) -> None:
+    def plot_metrics(self, metrics: Optional[list] = None, rolling_length: int = 500) -> None:
         import matplotlib.pyplot as plt
+        from .utils import moving_average, almost_factors
 
         if metrics is None:
             metrics = self.metrics.keys()
         
-        rolling_length = 500
         n_metrics = len(metrics)
-        ncols, nrows = self.almost_factors(n_metrics)
+        ncols, nrows = almost_factors(n_metrics)
         fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(8 * ncols, 4 * nrows))
         axs = np.ravel(axs)
 
         for i, metric in enumerate(metrics):
             data = self.metrics.get(metric, [])
-            x, ma = self.moving_average(data, rolling_length)
+            x, ma = moving_average(data, rolling_length)
             axs[i].plot(data, color="0.85", label="raw")
             if ma.size:
                 axs[i].plot(x, ma, color=f"C{i}", lw=1.5, label=f"MA(window={min(rolling_length, max(1, len(data)))})")
@@ -58,40 +56,11 @@ class Agent(abc.ABC):
         plt.tight_layout()
         plt.show()
 
-    @staticmethod
-    def moving_average(arr, window):
-        arr = np.array(arr, dtype=float).flatten()
-        if arr.size == 0:
-            return np.array([], dtype=int), np.array([], dtype=float)
-        window = max(1, min(window, arr.size))
-        if window == 1:
-            return np.arange(arr.size), arr
-        ma = np.convolve(arr, np.ones(window) / window, mode="valid")
-        x = np.arange(window - 1, arr.size)
-        return x, ma
-    
-    @staticmethod
-    def almost_factors(number):
-        '''
-        https://stackoverflow.com/a/77243426
-        find a pair of factors that are close enough for a number that is close enough
-        '''
-        def close_factors(number):
-            ''' 
-            find the closest pair of factors for a given number
-            '''
-            factor1 = 0
-            factor2 = number
-            while factor1 +1 <= factor2:
-                factor1 += 1
-                if number % factor1 == 0:
-                    factor2 = number // factor1
-                
-            return factor1, factor2
-        while True:
-            factor1, factor2 = close_factors(number)
-            if 1/2 * factor1 <= factor2: # the fraction in this line can be adjusted to change the threshold aspect ratio
-                break
-            number += 1
-        return factor1, factor2
-    
+    @abc.abstractmethod
+    def save(self, filepath: str) -> None:
+        raise NotImplementedError
+
+    @classmethod
+    @abc.abstractmethod
+    def load(cls, filepath: str, env: Union[gym.Env, str]) -> 'Agent':
+        raise NotImplementedError

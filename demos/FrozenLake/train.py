@@ -30,8 +30,12 @@ agent = TabularQLearningAgent(
 )
 
 agent.train(n_episodes=n_episodes)
-# agent.save("taxi_q_learning_agent.npz")
 
-# agent = TabularQLearningAgent.load("taxi_q_learning_agent.npz", env=env)
+
+import os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+save_path = os.path.join(current_dir, "q_learning_agent.npz")
+agent.save(save_path)
+
 
 agent.plot_metrics()
