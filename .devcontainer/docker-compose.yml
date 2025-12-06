@@ -1,13 +1,13 @@
 services:
   rl-dev:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: .devcontainer/Dockerfile
     container_name: rl-dev
     privileged: true
     command: /bin/bash
     stdin_open: true
     runtime: nvidia
     volumes:
-      - ../:/reinforcement-learning-fb
+      - ../:/reinforcement-learning-demos
     tty: true # Keeps the container running interactively

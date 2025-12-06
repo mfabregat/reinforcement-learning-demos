@@ -25,9 +25,12 @@ RUN apt-get update && \
 # Install specific packages
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    pip \
     swig \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+
 
     
 # Setup user configuration
@@ -40,5 +43,10 @@ USER $USERNAME
 ## Use bash instead of sh
 SHELL ["/bin/bash", "-c"]
 
-WORKDIR /reinforcement-learning-fb
+WORKDIR /reinforcement-learning-demos
 
+# Copy requirements.txt into the image
+COPY requirements.txt .
+
+# Install Python packages
+RUN pip install --upgrade pip && pip install -r requirements.txt
