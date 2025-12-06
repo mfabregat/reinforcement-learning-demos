@@ -19,7 +19,7 @@ The goal of this project is to build clear, reproducible implementations of RL a
 
 The project follows a standard RL interaction loop:
 
-![RL loop](assets/rl_loop.png){width="50%"}
+<img src="assets/rl_loop.png" width=50%>
 
 ## 🚀 Environments & Demos
 
