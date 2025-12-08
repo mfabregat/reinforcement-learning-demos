@@ -1,37 +1,114 @@
-# Reinforcement Learning Tutorial
+# Reinforcement Learning: From Theory to Practice
 
-This repository aims to provide a clear and concise introduction to fundamental Reinforcement Learning (RL) concepts and algorithms through custom implementations, popular library integrations, and practical demos.
+Welcome! This repository bridges the gap between Reinforcement Learning (RL) theory and code. We will explore fundamental concepts by implementing agents that learn to solve increasingly complex tasks.
 
-## Introduction to Reinforcement Learning
+## 1. Introduction to Reinforcement Learning
 
-Reinforcement Learning is a subfield of machine learning where an agent (i.e., the model) learns to make decisions by performing actions in an environment to maximize cumulative rewards. Unlike supervised learning (e.g., image recognition), RL does not rely on labeled datasets. Instead, it focuses on learning optimal policies through interaction with the environment (trial and error).
-
+At its core, RL is about learning from **interaction**. An **Agent** takes actions in an **Environment**, which responds with a **State** update and a **Reward**.
 
 <img src="assets/rl_loop.png" width=50% alt="Reinforcement Learning Loop"/>
 
+- **Agent**: The learner (e.g., our code).
+- **Environment**: The world (e.g., the game).
+- **State ($s$)**: The current situation.
+- **Action ($a$)**: The move the agent makes.
+- **Reward ($r$)**: Feedback on how good the action was.
 
-The figure above illustrates the core components of an RL system:
-1. **Agent**: The learner or decision-maker that selects actions based on a policy π.
-2. **Environment**: The external system with which the agent interacts (e.g., a game, a financial market).
-3. **State**: A representation of the current situation of the agent within the environment (e.g., the position of a game character, the current stock prices).
-4. **Action**: A set of possible moves the agent can make (e.g., move left, buy stock).
-5. **Reward**: A scalar feedback signal indicating the immediate benefit of an action taken (e.g., points scored, profit gained).
+The goal is to find a **Policy ($\pi$)**—a strategy mapping states to actions—that maximizes the total expected reward over time.
 
-Agents seek to learn a policy π that maximizes the expected cumulative reward over time, often formalized through Markov Decision Processes (MDPs).
-A policy π is a mapping from states to actions. That is, given a state ``s`, the policy π(s) defines the action `a` the agent should take to maximize future rewards.
-Different RL algorithms, such as the ones introduced in this repository, provide various approaches to learning optimal policies.
+### Quickstart
+Install dependencies to get started:
+```bash
+pip install -r requirements.txt
+```
 
-## Q Learning
+---
 
-Besides using the reward `r` as a heuristic to guide policy search, it can also be used to directly learn the value of taking a specific action `a` in a given state `s`. This is known as the Q-value, denoted as `Q(s, a)`. The Q-value represents the expected cumulative reward the agent can obtain by taking action `a` in state `s` and following the optimal policy thereafter:
-$$ Q(s, a) = \mathbb{E} \left[ \sum_{t=0}^{\infty} \gamma^t r_{t} \mid s_0 = s, a_0 = a \right] $$
+## 2. Tabular Q-Learning (The Basics)
 
-Note that the successive rewards are discounted by a factor `γ` (0 ≤ γ < 1) to prioritize immediate rewards over distant future rewards. This component determines the trade-off between exploration (seeking new knowledge, when `γ` is close to 0) and exploitation (leveraging known information, when `γ` is close to 1).
+**The Challenge**: Cross a slippery `FrozenLake` without falling into holes.
 
-The Q-learning algorithm iteratively updates the Q-values based on the agent's experiences using the Bellman equation:
-$$ Q(s, a) \leftarrow Q(s, a) + \alpha \left[ r + \gamma \max_{a'} Q(s', a') - Q(s, a) \right] $$
-where:
-- `α` is the learning rate (0 < α ≤ 1), determining how much new information overrides old information.
-- `s'` is the next state after taking action `a` in state `s`.
-- `max_{a'} Q(s', a')` represents the maximum expected future reward achievable from state `s'`.    
+### The Theory: Q-Values & The Bellman Equation
+How does the agent know which action is best? It learns a **Action-Value Function**, $Q(s, a)$, which estimates the total future reward of taking action $a$ in state $s$.
 
+For simple environments like FrozenLake, we can store these values in a table (a Q-Table). The agent updates this table based on its experience using the **Bellman Equation**:
+
+$$ Q(s, a) \leftarrow Q(s, a) + \alpha [r + \gamma \max_{a'} Q(s', a') - Q(s, a)] $$
+
+- $\alpha$ (Learning Rate): How much we trust new information.
+- $\gamma$ (Discount Factor): How much we value future rewards vs. immediate ones.
+- $\max_{a'} Q(s', a')$: The best possible future value from the next state.
+
+### The Practice
+Run the training script to watch the agent fill in its Q-Table. Initially, it explores randomly, but over time it learns the safe path.
+
+```bash
+python demos/FrozenLake/train.py
+```
+
+---
+
+## 3. Deep Q-Networks (Going Deep)
+
+**The Challenge**: Land a `LunarLander` spacecraft safely between two flags.
+
+### The Theory: From Tables to Networks
+In complex environments (like video games or robotics), the number of possible states is too huge for a table. We can't store a Q-value for every single pixel configuration!
+
+Instead, we use a **Neural Network** to *approximate* the Q-function. This is called a **Deep Q-Network (DQN)**.
+- Input: The state (e.g., coordinates, velocity).
+- Output: Q-values for every possible action.
+
+This introduces new challenges, like instability, which we solve with techniques like **Experience Replay** (learning from past memories) and **Target Networks** (keeping the learning target stable).
+
+### The Practice
+Train a Deep Q-Network to solve the Lunar Lander environment.
+
+```bash
+python demos/LunarLander/train.py
+```
+*(Note: Training a DQN takes longer than a simple table!)*
+
+---
+
+## 3. Soft Actor-Critic (Mastering Control)
+
+**The Challenge**: Make a `Humanoid` walk without falling. This is a complex control task with many moving joints.
+
+### The Theory: Actor-Critic Methods
+For high-dimensional, continuous control tasks (like robotics), we need more stability than standard DQN. **Actor-Critic** methods use two networks:
+- **Actor ($\pi$)**: Defines the policy (which action to take).
+- **Critic ($Q$)**: Estimates the value of that action (how good it was).
+
+We use **Soft Actor-Critic (SAC)**, which adds an "entropy" term to the reward. This encourages the agent to explore as many valid strategies as possible, making it robust and sample-efficient.
+
+### The Practice
+Train the humanoid walker using SAC.
+
+```bash
+python demos/Humanoid/train.py
+```
+
+---
+
+## 4. Interactive Demos
+
+Don't just watch—play! See if you can beat the agent.
+
+**Play FrozenLake:**
+```bash
+python demos/FrozenLake/human_play.py
+```
+
+**Play Lunar Lander:**
+```bash
+python demos/LunarLander/human_play.py
+```
+
+**Watch Trained Agents:**
+Once you've trained a model, watch it perform:
+```bash
+python demos/LunarLander/agent_play.py
+# or
+python demos/Humanoid/agent_play.py
+```
