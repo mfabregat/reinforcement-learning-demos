@@ -2,3 +2,4 @@ swig
 gymnasium[all]
 pygame
 matplotlib
+stable-baselines3

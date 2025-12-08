@@ -19,6 +19,9 @@ RUN apt-get update && \
     build-essential \
     sudo \
     x11-apps \
+    mesa-utils \
+    libgl1-mesa-glx \
+    libglu1-mesa \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

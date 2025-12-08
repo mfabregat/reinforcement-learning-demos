@@ -1,91 +1,37 @@
-# Reinforcement Learning Demos
+# Reinforcement Learning Tutorial
 
-A personal portfolio project where I assess and implement different reinforcement learning (RL) algorithms across classic control environments. The goal is to build clear, reproducible baselines starting from tabular Q-learning and moving towards function-approximation methods like DQN, policy gradients, and actor–critic.
+This repository aims to provide a clear and concise introduction to fundamental Reinforcement Learning (RL) concepts and algorithms through custom implementations, popular library integrations, and practical demos.
 
 ## Introduction to Reinforcement Learning
-- **Environment**: The world the agent interacts with. It defines state transitions and reward signals.
-- **Agent**: The learner/decision-maker that selects actions to maximize cumulative reward.
-- **States**: Observations that describe the environment at a given time.
-- **Actions**: Choices the agent can take from a state.
-- **Rewards**: Scalar feedback indicating the immediate desirability of the last action.
-- **State Value Function** `V(s)`: Expected return starting from state `s` under a policy.
-- **State–Action Value Function** `Q(s, a)`: Expected return from state `s` taking action `a` and following a policy thereafter.
 
-## Tabular Q-Learning
-Tabular Q-learning is a value-based, off-policy algorithm that learns the optimal `Q(s, a)` by iteratively updating a table. It uses the Bellman optimality equation with temporal-difference (TD) targets:
+Reinforcement Learning is a subfield of machine learning where an agent (i.e., the model) learns to make decisions by performing actions in an environment to maximize cumulative rewards. Unlike supervised learning (e.g., image recognition), RL does not rely on labeled datasets. Instead, it focuses on learning optimal policies through interaction with the environment (trial and error).
 
-`Q(s, a) ← Q(s, a) + α [ r + γ max_{a'} Q(s', a') − Q(s, a) ]`
 
-Key properties:
-- **Off-policy**: Learns the greedy policy while exploring with ε-greedy.
-- **Requires discrete state space**: Each row of the Q-table corresponds to a unique state index.
-- **Converges with sufficient exploration and decaying learning rate** in stationary environments.
+<img src="assets/rl_loop.png" width=50% alt="Reinforcement Learning Loop"/>
 
-In this repo we apply tabular Q-learning to two discrete environments where a Q-table is feasible: **Taxi** and **FrozenLake**.
 
-## Environments and Gymnasium
-We use the `gymnasium` library to create and interact with environments.
+The figure above illustrates the core components of an RL system:
+1. **Agent**: The learner or decision-maker that selects actions based on a policy π.
+2. **Environment**: The external system with which the agent interacts (e.g., a game, a financial market).
+3. **State**: A representation of the current situation of the agent within the environment (e.g., the position of a game character, the current stock prices).
+4. **Action**: A set of possible moves the agent can make (e.g., move left, buy stock).
+5. **Reward**: A scalar feedback signal indicating the immediate benefit of an action taken (e.g., points scored, profit gained).
 
-- **Taxi-v3**: A grid-world with discrete states and actions; the agent picks up and drops off a passenger. Deterministic transitions, sparse rewards, clear terminal conditions.
-- **FrozenLake-v1**: A grid of safe tiles and holes. With `is_slippery=True`, transitions are stochastic, making learning less stable.
+Agents seek to learn a policy π that maximizes the expected cumulative reward over time, often formalized through Markov Decision Processes (MDPs).
+A policy π is a mapping from states to actions. That is, given a state ``s`, the policy π(s) defines the action `a` the agent should take to maximize future rewards.
+Different RL algorithms, such as the ones introduced in this repository, provide various approaches to learning optimal policies.
 
-You can quickly get a feel for each environment by playing with the provided scripts.
+## Q Learning
 
-### Play the Games
-- Taxi: `demos/Taxi/play.py`
-- FrozenLake: `demos/FrozenLake/play.py`
+Besides using the reward `r` as a heuristic to guide policy search, it can also be used to directly learn the value of taking a specific action `a` in a given state `s`. This is known as the Q-value, denoted as `Q(s, a)`. The Q-value represents the expected cumulative reward the agent can obtain by taking action `a` in state `s` and following the optimal policy thereafter:
+$$ Q(s, a) = \mathbb{E} \left[ \sum_{t=0}^{\infty} \gamma^t r_{t} \mid s_0 = s, a_0 = a \right] $$
 
-Run with:
+Note that the successive rewards are discounted by a factor `γ` (0 ≤ γ < 1) to prioritize immediate rewards over distant future rewards. This component determines the trade-off between exploration (seeking new knowledge, when `γ` is close to 0) and exploitation (leveraging known information, when `γ` is close to 1).
 
-```bash
-# Activate environment (example: conda base)
-source /opt/conda/bin/activate base
+The Q-learning algorithm iteratively updates the Q-values based on the agent's experiences using the Bellman equation:
+$$ Q(s, a) \leftarrow Q(s, a) + \alpha \left[ r + \gamma \max_{a'} Q(s', a') - Q(s, a) \right] $$
+where:
+- `α` is the learning rate (0 < α ≤ 1), determining how much new information overrides old information.
+- `s'` is the next state after taking action `a` in state `s`.
+- `max_{a'} Q(s', a')` represents the maximum expected future reward achievable from state `s'`.    
 
-# Install dependencies
-pip install -r requirements.txt
-
-# Play Taxi
-python demos/Taxi/play.py
-
-# Play FrozenLake
-python demos/FrozenLake/play.py
-```
-
-## Training: Tabular Q-Learning
-Current implemented agent: `rl_agents/tabular_q_learning.py` with demos in:
-- Taxi training: `demos/Taxi/q_learning.py`
-- FrozenLake training: `demos/FrozenLake/q_learning.py`
-
-Run training:
-
-```bash
-# Taxi training
-python demos/Taxi/q_learning.py
-
-# FrozenLake training
-python demos/FrozenLake/q_learning.py
-```
-
-### Taxi Results and Conclusions
-- **Learning behavior**: Rewards per episode improve as ε decays and the Q-table values stabilize.
-- **Convergence**: The agent reliably completes the task (pickup → dropoff) with high success rate after sufficient episodes.
-- **Takeaways**: Taxi’s discrete, deterministic dynamics are well-suited for tabular methods. Hyperparameters (α, γ, ε schedule) primarily affect speed of convergence.
-
-### FrozenLake Notes
-- **Stochasticity**: With `is_slippery=True`, actions may not lead to intended moves, increasing variance in episode returns.
-- **Metrics**: Success rate and average return are not perfect, but the agent achieves a performance considered “solved” for the chosen map and configuration.
-- **Implication**: Even with tabular methods, careful tuning and sufficient exploration can handle moderate stochasticity; however, function approximation often scales better for larger or more complex maps.
-
-## Repository Structure
-- `demos/Taxi/`: Play and tabular Q-learning training scripts for Taxi.
-- `demos/FrozenLake/`: Play and tabular Q-learning training scripts for FrozenLake.
-- `rl_agents/`: Python package for agents.
-	- `tabular_q_learning.py`: Current implementation of a tabular Q-learning agent.
-	- `dqn.py`: Placeholder for a Deep Q-Network agent.
-	- `agent.py`: Base interfaces/utilities.
-
-## Roadmap
-- **DQN**: Implement Deep Q-Network with replay buffer, target network, and ε-greedy exploration; apply to `LunarLander-v2`.
-- **Policy Gradient (TBD)**: Implement a baseline REINFORCE or similar method for a suitable environment.
-- **Actor–Critic (TBD)**: Implement an advantage actor–critic variant for improved sample efficiency.
-- **Experiment tracking**: Add logging and plots for returns, success rates, and Q-value convergence.
