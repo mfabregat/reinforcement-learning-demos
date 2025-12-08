@@ -1,7 +1,7 @@
 import gymnasium as gym
 import numpy as np
-from rl_agents.dqn import DQNAgent
-from rl_agents.agent_play import play
+from rl_agents import DQNAgent
+from rl_agents import play
 
 if __name__ == "__main__":
     import os
@@ -13,7 +13,8 @@ if __name__ == "__main__":
     env = gym.wrappers.RecordVideo(env, video_dir, episode_trigger=lambda x: True)
 
     # Load the pre-trained agent
-    agent = DQNAgent.load(os.path.join(current_dir, "lunar_dqn.pt"), env)
+    model_dir = "models/dqn_lunarlander.pt"
+    agent = DQNAgent.load(model_dir, env)
 
     # Play the environment
     play(env, agent)

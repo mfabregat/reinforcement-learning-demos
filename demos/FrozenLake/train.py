@@ -1,14 +1,11 @@
 import gymnasium as gym
-from tqdm import tqdm
-import numpy as np
-import pickle
 import os
 
 import sys
 print(sys.path)
 
 
-from rl_agents.tabular_q_learning import TabularQLearningAgent
+from rl_agents import QLearningAgent
 
 n_episodes = 50_000
 
@@ -20,7 +17,7 @@ final_epsilon = 0.00001
 # Decay epsilon over 80% of training episodes
 epsilon_decay = (final_epsilon / initial_epsilon) ** (1 / (n_episodes * 0.8))
 
-agent = TabularQLearningAgent(
+agent = QLearningAgent(
     env=env,
     learning_rate=learning_rate,
     initial_epsilon=initial_epsilon,
@@ -31,11 +28,7 @@ agent = TabularQLearningAgent(
 
 agent.train(n_episodes=n_episodes)
 
-
-import os
-current_dir = os.path.dirname(os.path.abspath(__file__))
-save_path = os.path.join(current_dir, "q_learning_agent.npz")
-agent.save(save_path)
-
+model_dir = "models/q_learning_frozenlake.npz"
+agent.save(model_dir)
 
 agent.plot_metrics()

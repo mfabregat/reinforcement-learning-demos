@@ -7,7 +7,7 @@ from typing import Union
 
 from .agent import Agent
 
-class TabularQLearningAgent(Agent):
+class QLearningAgent(Agent):
     def __init__(
             self,
             env: Union[gym.Env, str],

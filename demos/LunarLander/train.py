@@ -25,7 +25,7 @@ def train():
     # Train for a few episodes to verify it runs
     agent.train(n_episodes=500, max_steps=1000)
     
-    agent.save("lunar_dqn.pt")
+    agent.save("models/dqn_lunarlander.pt")
     agent.plot_metrics(rolling_length=50)
 
     # # Verify loading

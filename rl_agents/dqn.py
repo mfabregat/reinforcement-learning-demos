@@ -107,19 +107,19 @@ class DQNAgent(Agent):
         if len(self.memory) < self.batch_size:
             return
         transitions = self.memory.sample(self.batch_size)
-        batch = Transition(*zip(*transitions))
+        batch = Transition(*zip(*transitions)) # from list of Transitions to Transition of lists
 
-        non_final_mask = torch.tensor(tuple(map(lambda s: s is not None,
-                                              batch.next_state)), device=self.device, dtype=torch.bool)
-        non_final_next_states = torch.cat([s for s in batch.next_state
-                                                    if s is not None])
         state_batch = torch.cat(batch.state)
         action_batch = torch.cat(batch.action)
         reward_batch = torch.cat(batch.reward)
 
-        state_action_values = self.policy_net(state_batch).gather(1, action_batch)
+        state_action_values = self.policy_net(state_batch).gather(1, action_batch) 
 
         next_state_values = torch.zeros(self.batch_size, device=self.device)
+        # Compute mask of non-final states and concatenate the batch elements
+        non_final_mask = torch.tensor(tuple(map(lambda s: s is not None,
+                                              batch.next_state)), device=self.device, dtype=torch.bool)
+        non_final_next_states = torch.cat([s for s in batch.next_state if s is not None])
         with torch.no_grad():
             next_state_values[non_final_mask] = self.target_net(non_final_next_states).max(1).values
         expected_state_action_values = (next_state_values * self.gamma) + reward_batch
@@ -170,8 +170,6 @@ class DQNAgent(Agent):
                 state = next_state
 
                 self.update()
-                
-
 
                 if done or (max_steps and t >= max_steps):
                     self.metrics["episode_rewards"].append(episode_reward)

@@ -1,7 +1,6 @@
 import gymnasium as gym
-import numpy as np
-from rl_agents.tabular_q_learning import TabularQLearningAgent
-from rl_agents.agent_play import play
+from rl_agents import QLearningAgent
+from rl_agents import play
 
 if __name__ == "__main__":
     import os
@@ -14,7 +13,8 @@ if __name__ == "__main__":
     env = gym.wrappers.RecordVideo(env, video_dir, episode_trigger=lambda x: True)
 
     # Load the pre-trained agent
-    agent = TabularQLearningAgent.load(os.path.join(current_dir, "q_learning_agent.npz"), env)
+    model_dir = "models/q_learning_taxi.npz"
+    agent = QLearningAgent.load(model_dir, env)
 
     # Play the Taxi environment
     play(env, agent)
