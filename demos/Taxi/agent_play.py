@@ -15,6 +15,8 @@ if __name__ == "__main__":
     # Load the pre-trained agent
     model_dir = "models/q_learning_taxi.npz"
     agent = QLearningAgent.load(model_dir, env)
+    
+    agent.plot_metrics()
 
     # Play the Taxi environment
     play(env, agent)

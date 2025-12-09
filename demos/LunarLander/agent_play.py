@@ -16,5 +16,7 @@ if __name__ == "__main__":
     model_dir = "models/dqn_lunarlander.pt"
     agent = DQNAgent.load(model_dir, env)
 
+    agent.plot_metrics(rolling_length=50)
+
     # Play the environment
     play(env, agent)
