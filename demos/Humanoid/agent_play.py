@@ -4,7 +4,7 @@ import glob
 import os
 
 def play():
-    env_name = "Humanoid-v4"
+    env_name = "Humanoid-v5"
     model_path = "models/sac_humanoid.zip"
 
     # Check if model exists
