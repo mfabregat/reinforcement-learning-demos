@@ -15,6 +15,7 @@ if __name__ == "__main__":
     # Load the pre-trained agent
     agent_dir = "models/q_learning_frozenlake.npz"
     agent = QLearningAgent.load(agent_dir, env)
+    agent.plot_metrics()
 
     # Play the environment
     play(env, agent)

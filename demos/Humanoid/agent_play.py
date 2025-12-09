@@ -12,7 +12,8 @@ def play():
         print(f"Model not found at {model_path}. Please run train.py first.")
         return
 
-    env = gym.make(env_name, render_mode="human")
+    env = gym.make(env_name, render_mode="rgb_array")
+    env = gym.wrappers.RecordVideo(env, video_folder="demos/Humanoid/videos", episode_trigger=lambda x: True)
 
     print(f"Loading model from {model_path}...")
     model = SAC.load(model_path, env=env)
@@ -24,6 +25,7 @@ def play():
             obs, reward, terminated, truncated, info = env.step(action)
             
             if terminated or truncated:
+                break
                 obs, _ = env.reset()
     except KeyboardInterrupt:
         print("\nStopped.")
